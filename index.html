@@ -13,39 +13,46 @@
     #result {
       font-size: 24px;
       color: #2c3e50;
+      margin-top: 20px;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <h1>Monitor Detection</h1>
-  <p>This page attempts to detect how many monitors are being used.</p>
-  <div id="result">Detecting...</div>
+  <h1>Start your Interview</h1>
+  <p>Click the button</p>
+  <button onclick="detectMonitors()">Start</button>
+  <div id="result"></div>
 
   <script>
-    function detectMonitors() {
+    async function detectMonitors() {
+      const resultEl = document.getElementById('result');
+
       if (window.getScreenDetails) {
-        // Future API, not widely supported yet
-        window.getScreenDetails().then(details => {
-          document.getElementById('result').textContent = 
-            `Detected ${details.screens.length} monitor(s).`;
-        });
+        try {
+          const details = await window.getScreenDetails();
+          resultEl.textContent = `Detected ${details.screens.length} monitor(s).`;
+        } catch (error) {
+          resultEl.textContent = "Permission denied or not supported in this browser.";
+          console.error(error);
+        }
       } else {
-        // Approximate based on screen width and available width
+        // Fallback method
         const totalWidth = window.screen.width;
         const availWidth = window.screen.availWidth;
 
-        // Basic assumption: if total screen width is much more than available width, multiple monitors
         let count = 1;
         if (totalWidth > availWidth + 1000) {
           count = Math.round(totalWidth / availWidth);
         }
 
-        document.getElementById('result').textContent = 
-          `Estimated monitor count: ${count}`;
+        resultEl.textContent = `Estimated monitor count: ${count} (approximate)`;
       }
     }
-
-    detectMonitors();
   </script>
 </body>
 </html>
