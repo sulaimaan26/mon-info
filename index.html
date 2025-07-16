@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitor Count</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    #result {
+      font-size: 24px;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <h1>Monitor Detection</h1>
+  <p>This page attempts to detect how many monitors are being used.</p>
+  <div id="result">Detecting...</div>
+
+  <script>
+    function detectMonitors() {
+      if (window.getScreenDetails) {
+        // Future API, not widely supported yet
+        window.getScreenDetails().then(details => {
+          document.getElementById('result').textContent = 
+            `Detected ${details.screens.length} monitor(s).`;
+        });
+      } else {
+        // Approximate based on screen width and available width
+        const totalWidth = window.screen.width;
+        const availWidth = window.screen.availWidth;
+
+        // Basic assumption: if total screen width is much more than available width, multiple monitors
+        let count = 1;
+        if (totalWidth > availWidth + 1000) {
+          count = Math.round(totalWidth / availWidth);
+        }
+
+        document.getElementById('result').textContent = 
+          `Estimated monitor count: ${count}`;
+      }
+    }
+
+    detectMonitors();
+  </script>
+</body>
+</html>
